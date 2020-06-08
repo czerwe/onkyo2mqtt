@@ -18,11 +18,12 @@ https://github.com/mqtt-smarthome for a rationale and architectural overview.
 
 Prerequisites
 -------------
-* Python 2.7+
+* Python 3.6+
 * onkyo-eiscp - https://github.com/miracle2k/onkyo-eiscp (implements
   the Onkyo EISCP protocol and command translation)
 * Eclipse Paho for Python - http://www.eclipse.org/paho/clients/python/
   (used for MQTT communication)
+* Flask
 
 
 MQTT Message format
@@ -109,3 +110,24 @@ Changelog
 * 0.2 - 2014/12/28
   - maintain a minimum of 50ms wait time between commands
   
+
+
+
+
+# MVL
+#  - Main Volume Level
+
+# SLI
+#  - Select input
+#    02 - Game
+#    10 - BD/DVD
+#    11 - StreamingBox
+#    12 - TV
+
+# SLA
+#  - Audio Selector
+
+# LMD
+#  - Set Music mode
+#    0F Mono
+#    13 Full Mono
