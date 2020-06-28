@@ -25,6 +25,7 @@ class mainloop(threading.Thread):
                 if msg is not None:
                     if msg.startswith("MVL"):
                         self.logger.info(f"Set Main Volume to {int(msg[-2:], 16)}")
+                        self.ctx.volume.set(float(int(msg[-2:], 16)))
                     else:
                         self.logger.debug(f"got msg: {msg}")
 

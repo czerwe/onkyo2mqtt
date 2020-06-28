@@ -5,6 +5,7 @@ import os
 import eiscp
 from .thread import mainloop
 
+from prometheus_client import Gauge, Enum
 
 class Singelton:
     def __init__(self, cls):
@@ -38,6 +39,31 @@ class context(object):
         self._onkyo_id = os.environ.get("O2M_ONKYO_ID", None)
         self.receiver = None
         self.mainthread = None
+
+        self._volume = Gauge(
+            name="masterVolume",
+            documentation="Volume level",
+            labelnames=["topic"],
+            namespace="onkyo"
+        )
+
+        # self._mode = Enum(
+        #     name="listeningMode",
+        #     documentation="Volume level",
+        #     labelnames=["topic"],
+        #     namespace="onkyo",    
+        #     states=[
+        #         "unknown",
+        #         "full-mono", #LMD13
+        #         "theater-dimensional", #LMD0D
+        #         "direct", #LMD01
+        #         "plii", # - dolby-surround", #LMD80
+        #         "plii",# - pliix-thx-cinema", #LMD84
+        #         "tv-logic", #LMB0B
+        #         "all-ch-stereo", #LMD0C
+        #     ]
+        # )
+
 
     @property
     def last_send(self):
@@ -88,6 +114,12 @@ class context(object):
     def start_thread(self):
         self.mainthread = mainloop(self)
         self.mainthread.start()
+
+    @property
+    def volume(self):
+        return self._volume.labels(topic=self.mqtt_topic)
+    
+
 
 
 def callback_loglevel(value):

@@ -3,11 +3,14 @@ import os
 import logging
 from .common import sendavr, publish, callback_loglevel, get_receiver, context
 
+
+from prometheus_flask_exporter import PrometheusMetrics
+# from prometheus_flask_exporter.multiprocess import GunicornPrometheusMetrics
 import paho.mqtt.client as mqtt
 from .mqtt_handler import msghandler, connecthandler, disconnecthandler
 
 # FE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frontend")
-_version = "0.8.0"
+_version = "0.9.0"
 
 ctx = context.Instance()
 
@@ -19,12 +22,26 @@ logging.basicConfig(
 # app = Flask(__name__, static_url_path="", static_folder=FE_DIR)
 app = Flask(__name__)
 
+# metrics = GunicornPrometheusMetrics(app)
+metrics = PrometheusMetrics(app)
+
+# static information as metric
+metrics.info('app_info', 'Application info', version=_version)
+
 # app.route("/version", methods=["GET"])(version_info)
 
-@app.route('/vesion')
+@app.route('/version')
 def version():
+    logger = logging.getLogger('route::version')
+    logger.debug('called version')
     global version
     return version
+
+@app.route("/")
+def root():
+    logger = logging.getLogger('route::root')
+    logger.debug('called Root')
+    return ''
 
 ctx.mqc = mqtt.Client()
 ctx.mqc.on_message = msghandler
